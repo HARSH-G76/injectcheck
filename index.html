@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https:; img-src 'self' data:; connect-src https://generativelanguage.googleapis.com https://api.openai.com https:;">
+  <title>InjectCheck — Free AI Chatbot Security & Prompt-Injection Tester</title>
+  <meta name="description" content="Test your small business AI chatbot for prompt injection, confidential prompt leaks, and guardrail bypasses before your customers do. 100% browser-based and free.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <header class="top-nav" role="banner">
+    <div class="nav-container">
+      <a href="#" class="brand" aria-label="InjectCheck Home">
+        <svg class="brand-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+        <span class="brand-name">InjectCheck</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="#how-it-works" data-i18n="navHowItWorks">How it works</a>
+        <a href="#what-we-test" data-i18n="navWhatWeTest">What we test</a>
+        <a href="#privacy" data-i18n="navPrivacy">Privacy</a>
+        <a href="#faq" data-i18n="navFaq">FAQ</a>
+      </nav>
+
+      <div class="nav-controls">
+        <button id="lang-toggle-btn" class="btn-icon" aria-label="Switch Language / भाषा बदलें" title="Switch Language">
+          <span class="lang-label" id="current-lang-label">हिन्दी</span>
+        </button>
+        <button id="theme-toggle-btn" class="btn-icon" aria-label="Toggle Theme" title="Toggle Light/Dark Theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Hero Section -->
+    <section class="hero-section" aria-labelledby="hero-title">
+      <div class="container hero-container">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span data-i18n="heroBadge">OWASP LLM Top 10 Compliant Auditing</span>
+        </div>
+        <h1 id="hero-title" class="hero-title" data-i18n="heroTitle">Test your AI chatbot before your customers do.</h1>
+        <p class="hero-subtitle" data-i18n="heroSubtitle">InjectCheck runs 24 automated prompt-injection and leakage attacks right in your browser. Get actionable, plain-language hardening fixes in English and Hindi.</p>
+
+        <div class="hero-actions">
+          <a href="#wizard-card" class="btn btn-primary" id="start-testing-btn" data-i18n="startTesting">Start Testing</a>
+          <button type="button" class="btn btn-secondary" id="try-demo-btn" data-i18n="tryDemo">Try Demo (No API Key)</button>
+        </div>
+
+        <div class="trust-chips">
+          <div class="chip">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span data-i18n="chipRunsInBrowser">Runs in your browser</span>
+          </div>
+          <div class="chip">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            <span data-i18n="chipFree">100% Free & Open</span>
+          </div>
+          <div class="chip">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span data-i18n="chipNoData">No data stored by us</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wizard Stepper & Container Card -->
+    <section class="wizard-section" id="wizard-card" aria-label="Testing Wizard">
+      <div class="container">
+        <!-- Progress Stepper -->
+        <ol class="stepper" role="tablist">
+          <li class="step-item active" id="step-nav-1" role="tab" aria-selected="true" aria-controls="step-panel-1">
+            <div class="step-circle">1</div>
+            <span class="step-label" data-i18n="step1Label">Connect</span>
+          </li>
+          <li class="step-line" aria-hidden="true"></li>
+          <li class="step-item" id="step-nav-2" role="tab" aria-selected="false" aria-controls="step-panel-2">
+            <div class="step-circle">2</div>
+            <span class="step-label" data-i18n="step2Label">Your Bot</span>
+          </li>
+          <li class="step-line" aria-hidden="true"></li>
+          <li class="step-item" id="step-nav-3" role="tab" aria-selected="false" aria-controls="step-panel-3">
+            <div class="step-circle">3</div>
+            <span class="step-label" data-i18n="step3Label">Run</span>
+          </li>
+          <li class="step-line" aria-hidden="true"></li>
+          <li class="step-item" id="step-nav-4" role="tab" aria-selected="false" aria-controls="step-panel-4">
+            <div class="step-circle">4</div>
+            <span class="step-label" data-i18n="step4Label">Report</span>
+          </li>
+        </ol>
+
+        <!-- Wizard Card -->
+        <div class="wizard-card-surface">
+
+          <!-- STEP 1: CONNECT -->
+          <div class="step-panel active" id="step-panel-1" role="tabpanel" aria-labelledby="step-nav-1">
+            <h2 class="panel-heading" data-i18n="step1Heading">Choose your chatbot connection</h2>
+            <p class="panel-subheading" data-i18n="step1Subheading">Test an offline demo bot or connect directly to your Google Gemini or OpenAI-compatible endpoint.</p>
+
+            <div class="provider-grid">
+              <label class="provider-radio-card active">
+                <input type="radio" name="provider" value="demo" checked>
+                <div class="radio-card-body">
+                  <div class="radio-card-header">
+                    <span class="provider-title" data-i18n="providerDemo">Demo Simulator</span>
+                    <span class="badge badge-teal" data-i18n="badgeOffline">Offline</span>
+                  </div>
+                  <p class="provider-desc" data-i18n="providerDemoDesc">Zero setup. Test our built-in vulnerable or hardened demo shop bots to see how testing works.</p>
+                </div>
+              </label>
+
+              <label class="provider-radio-card">
+                <input type="radio" name="provider" value="gemini">
+                <div class="radio-card-body">
+                  <div class="radio-card-header">
+                    <span class="provider-title">Google Gemini</span>
+                    <span class="badge badge-indigo">Direct API</span>
+                  </div>
+                  <p class="provider-desc" data-i18n="providerGeminiDesc">Direct browser call to Google AI Studio. Free-tier keys supported with automatic backoff.</p>
+                </div>
+              </label>
+
+              <label class="provider-radio-card">
+                <input type="radio" name="provider" value="openai">
+                <div class="radio-card-body">
+                  <div class="radio-card-header">
+                    <span class="provider-title">OpenAI-Compatible</span>
+                    <span class="badge badge-indigo">Direct API</span>
+                  </div>
+                  <p class="provider-desc" data-i18n="providerOpenaiDesc">Connect OpenAI, Groq, Ollama, Together, or any standard /chat/completions endpoint.</p>
+                </div>
+              </label>
+            </div>
+
+            <!-- Provider Configuration Forms -->
+            <div class="config-box" id="demo-config">
+              <div class="form-group">
+                <label for="demo-bot-select" class="form-label" data-i18n="selectDemoBot">Select Simulated Bot</label>
+                <select id="demo-bot-select" class="form-select">
+                  <option value="vulnerable" data-i18n="vulnerableDemoBot">Vulnerable Demo Bot (fails ~70% of attacks)</option>
+                  <option value="hardened" data-i18n="hardenedDemoBot">Hardened Demo Bot (resists ~90% of attacks)</option>
+                </select>
+                <p class="form-hint" data-i18n="demoNotice">Simulated bot running deterministic regex rules locally in your browser. Not a real AI endpoint.</p>
+              </div>
+            </div>
+
+            <div class="config-box hidden" id="gemini-config">
+              <div class="form-group">
+                <label for="gemini-key" class="form-label" data-i18n="apiKey">Gemini API Key</label>
+                <input type="password" id="gemini-key" class="form-input" placeholder="AIzaSy..." autocomplete="off">
+                <p class="form-hint" data-i18n="geminiKeyHint">Never saved to disk or sent to any server except Google. Held only in browser memory.</p>
+              </div>
+              <div class="form-group">
+                <label for="gemini-model" class="form-label" data-i18n="modelName">Model Name</label>
+                <input type="text" id="gemini-model" class="form-input" value="gemini-1.5-flash" placeholder="gemini-1.5-flash or gemini-2.0-flash">
+                <p class="form-hint" data-i18n="geminiModelHint">Hint: Copy current free-tier model name from Google AI Studio (e.g. gemini-1.5-flash).</p>
+              </div>
+            </div>
+
+            <div class="config-box hidden" id="openai-config">
+              <div class="form-group">
+                <label for="openai-url" class="form-label" data-i18n="baseUrl">Base URL</label>
+                <input type="text" id="openai-url" class="form-input" value="https://api.openai.com/v1" placeholder="https://api.openai.com/v1">
+                <p class="form-hint">Examples: <code>https://api.openai.com/v1</code>, <code>https://api.groq.com/openai/v1</code>, <code>http://localhost:11434/v1</code></p>
+              </div>
+              <div class="form-group">
+                <label for="openai-key" class="form-label" data-i18n="apiKey">API Key</label>
+                <input type="password" id="openai-key" class="form-input" placeholder="sk-..." autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label for="openai-model" class="form-label" data-i18n="modelName">Model Name</label>
+                <input type="text" id="openai-model" class="form-input" value="gpt-4o-mini" placeholder="gpt-4o-mini, llama-3.1-8b-instant, etc.">
+              </div>
+            </div>
+
+            <div class="step-nav-actions">
+              <span></span>
+              <button type="button" class="btn btn-primary next-step-btn" data-next="2" data-i18n="nextStep">Next: Your Bot &rarr;</button>
+            </div>
+          </div>
+
+          <!-- STEP 2: YOUR BOT -->
+          <div class="step-panel hidden" id="step-panel-2" role="tabpanel" aria-labelledby="step-nav-2">
+            <h2 class="panel-heading" data-i18n="step2Heading">Configure your bot prompt and test scope</h2>
+            <p class="panel-subheading" data-i18n="step2Subheading">Paste the exact instructions your chatbot runs on. We'll automatically append a dynamic canary trap during the run.</p>
+
+            <div class="sample-prompt-bar">
+              <span class="sample-label" data-i18n="loadSampleLabel">Quick start samples:</span>
+              <button type="button" class="btn btn-sm btn-outline" id="load-sample-en-btn">Sample Shop Prompt (English)</button>
+              <button type="button" class="btn btn-sm btn-outline" id="load-sample-hi-btn">दुकानदार प्रॉम्प्ट (हिन्दी)</button>
+            </div>
+
+            <div class="form-group">
+              <div class="label-row">
+                <label for="system-prompt-input" class="form-label" data-i18n="systemPromptLabel">System Prompt (Instructions to your AI)</label>
+                <span class="char-count" id="prompt-char-count">0 characters</span>
+              </div>
+              <textarea id="system-prompt-input" class="form-textarea" rows="7" placeholder="You are a helpful customer support agent for Sharma Kirana Store in Jaipur. You answer questions about opening hours, grocery availability, and order status..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="extra-secrets-input" class="form-label" data-i18n="extraSecretsLabel">Extra secrets or words your bot must never say (optional, comma-separated)</label>
+              <input type="text" id="extra-secrets-input" class="form-input" placeholder="WIFI_PASS_2025, WHOLESALE_DISCOUNT_40, internal_database_v2">
+              <p class="form-hint" data-i18n="extraSecretsHint">InjectCheck checks if any of these words or their encodings leak during testing.</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" data-i18n="testScopeLabel">Test Suite Size</label>
+              <div class="run-size-selector">
+                <label class="size-option">
+                  <input type="radio" name="runSize" value="quick" checked>
+                  <div class="size-option-card">
+                    <span class="size-title" data-i18n="quickRunTitle">Quick Run (12 tests)</span>
+                    <span class="size-desc" data-i18n="quickRunDesc">Essential high-severity vectors. Fast audit in ~15-30s.</span>
+                  </div>
+                </label>
+                <label class="size-option">
+                  <input type="radio" name="runSize" value="full">
+                  <div class="size-option-card">
+                    <span class="size-title" data-i18n="fullRunTitle">Full Audit (24 tests)</span>
+                    <span class="size-desc" data-i18n="fullRunDesc">Comprehensive OWASP coverage including multi-language, ROT13, and Base64.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="consent-box">
+              <label class="checkbox-container">
+                <input type="checkbox" id="ownership-checkbox">
+                <span class="checkmark"></span>
+                <span class="checkbox-label" data-i18n="ownershipConsent">I own this chatbot or have explicit permission to test it. I understand InjectCheck runs benign prompt-injection audits.</span>
+              </label>
+            </div>
+
+            <div class="step-nav-actions">
+              <button type="button" class="btn btn-secondary prev-step-btn" data-prev="1" data-i18n="backStep">&larr; Back</button>
+              <button type="button" class="btn btn-primary" id="start-run-btn" disabled data-i18n="startAudit">Run Security Audit &rarr;</button>
+            </div>
+          </div>
+
+          <!-- STEP 3: RUN LIVE PROGRESS -->
+          <div class="step-panel hidden" id="step-panel-3" role="tabpanel" aria-labelledby="step-nav-3">
+            <div class="run-header">
+              <div>
+                <h2 class="panel-heading" data-i18n="auditRunning">Security Audit In Progress...</h2>
+                <p class="panel-subheading" id="run-progress-status">Running 0 of 24 tests with concurrency pool of 3</p>
+              </div>
+              <button type="button" class="btn btn-danger" id="cancel-run-btn" data-i18n="cancelAudit">Cancel Audit</button>
+            </div>
+
+            <div class="progress-bar-container" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="run-progress-bar-wrap">
+              <div class="progress-bar-fill" id="run-progress-fill" style="width: 0%;"></div>
+            </div>
+
+            <!-- Error Banner if > 30% errors -->
+            <div class="alert-banner alert-warning hidden" id="high-error-banner" role="alert">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <div class="alert-content">
+                <strong data-i18n="highErrorTitle">High network/API failure rate detected.</strong>
+                <p data-i18n="highErrorDesc">More than 30% of tests resulted in network or rate limit errors. Check your API key, CORS permissions, or try Demo Simulator.</p>
+              </div>
+            </div>
+
+            <!-- Live Test Rows -->
+            <div class="live-test-list" id="live-test-container" aria-live="polite">
+              <!-- Dynamically populated rows -->
+            </div>
+          </div>
+
+          <!-- STEP 4: REPORT -->
+          <div class="step-panel hidden" id="step-panel-4" role="tabpanel" aria-labelledby="step-nav-4">
+            <div class="report-header-actions">
+              <div>
+                <h2 class="panel-heading" data-i18n="reportTitle">Audit Assessment Report</h2>
+                <p class="panel-subheading" id="report-timestamp">Completed on October 29, 2026</p>
+              </div>
+              <div class="report-action-buttons no-print">
+                <button type="button" class="btn btn-sm btn-outline" id="print-report-btn" data-i18n="printPdf">Print / Save PDF</button>
+                <button type="button" class="btn btn-sm btn-outline" id="download-json-btn" data-i18n="downloadJson">Download JSON</button>
+                <button type="button" class="btn btn-sm btn-outline" id="copy-summary-btn" data-i18n="copySummary">Copy Summary</button>
+              </div>
+            </div>
+
+            <!-- Before/After Comparison Banner (when re-tested) -->
+            <div class="delta-banner hidden" id="delta-banner">
+              <div class="delta-icon" id="delta-icon-box">&uarr;</div>
+              <div class="delta-content">
+                <strong id="delta-title">Score Improved by +24 points!</strong>
+                <p id="delta-desc">Previous score: 45% &rarr; New score: 69%. Fixed 4 critical injection vectors.</p>
+              </div>
+            </div>
+
+            <!-- Scorecard Hero -->
+            <div class="scorecard-grid">
+              <div class="score-card-main">
+                <div class="score-ring-wrap">
+                  <svg class="score-svg" viewBox="0 0 120 120" width="130" height="130">
+                    <circle class="score-bg-ring" cx="60" cy="60" r="52"/>
+                    <circle class="score-progress-ring" id="score-meter-circle" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+                  </svg>
+                  <div class="score-ring-label">
+                    <span class="score-number" id="report-score-num">0</span>
+                    <span class="score-percent">%</span>
+                  </div>
+                </div>
+                <div class="score-status-group">
+                  <div class="risk-badge" id="report-risk-badge">
+                    <span id="risk-badge-icon" aria-hidden="true">&#9679;</span>
+                    <span id="risk-badge-text">Calculating...</span>
+                  </div>
+                  <span class="score-calc-note" data-i18n="scoreFormulaHint">Formula: (Passed + 0.5 &times; Review) &divide; Completed Tests</span>
+                </div>
+              </div>
+
+              <div class="kpi-grid">
+                <div class="kpi-card kpi-pass">
+                  <span class="kpi-label" data-i18n="kpiPassed">Passed</span>
+                  <span class="kpi-val" id="kpi-pass-count">0</span>
+                </div>
+                <div class="kpi-card kpi-fail">
+                  <span class="kpi-label" data-i18n="kpiFailed">Failed</span>
+                  <span class="kpi-val" id="kpi-fail-count">0</span>
+                </div>
+                <div class="kpi-card kpi-review">
+                  <span class="kpi-label" data-i18n="kpiReview">Needs Review</span>
+                  <span class="kpi-val" id="kpi-review-count">0</span>
+                </div>
+                <div class="kpi-card kpi-error">
+                  <span class="kpi-label" data-i18n="kpiErrors">Errors</span>
+                  <span class="kpi-val" id="kpi-error-count">0</span>
+                </div>
+                <div class="kpi-card">
+                  <span class="kpi-label" data-i18n="kpiTime">Time Taken</span>
+                  <span class="kpi-val" id="kpi-time-taken">0s</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Per-Category Progress Bars -->
+            <div class="report-section">
+              <h3 class="section-title" data-i18n="categoryBreakdownTitle">Category Breakdown</h3>
+              <div class="category-bars-container" id="category-bars-list">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <!-- Hardening Guidance & Auto-Apply -->
+            <div class="report-section hardening-section">
+              <div class="hardening-header">
+                <div>
+                  <h3 class="section-title" data-i18n="howToFixTitle">How to Fix Vulnerabilities</h3>
+                  <p class="section-subtitle" data-i18n="howToFixSubtitle">Copy these battle-tested defensive instructions into your chatbot's prompt to immediately block attacks.</p>
+                </div>
+                <button type="button" class="btn btn-teal no-print" id="auto-apply-fixes-btn" data-i18n="autoApplyFixes">Add Fixes to My Prompt &amp; Re-Test &rarr;</button>
+              </div>
+              <div class="fixes-grid" id="hardening-fixes-list">
+                <!-- Dynamically populated recommendations -->
+              </div>
+            </div>
+
+            <!-- Detailed Test Evidence Table -->
+            <div class="report-section">
+              <div class="table-controls">
+                <h3 class="section-title" data-i18n="testEvidenceTitle">Detailed Test Evidence</h3>
+                <div class="filter-chips" role="group" aria-label="Filter results">
+                  <button type="button" class="filter-chip active" data-filter="all" data-i18n="filterAll">All</button>
+                  <button type="button" class="filter-chip chip-fail" data-filter="fail" data-i18n="filterFail">Failed</button>
+                  <button type="button" class="filter-chip chip-review" data-filter="review" data-i18n="filterReview">Review</button>
+                  <button type="button" class="filter-chip chip-pass" data-filter="pass" data-i18n="filterPass">Passed</button>
+                </div>
+              </div>
+
+              <div class="test-table-wrap">
+                <table class="test-table" id="report-test-table">
+                  <thead>
+                    <tr>
+                      <th data-i18n="thTest">Test Attack</th>
+                      <th data-i18n="thCategory">Category &amp; OWASP</th>
+                      <th data-i18n="thVerdict">Verdict</th>
+                      <th data-i18n="thReasons">Detected Reasons</th>
+                      <th class="no-print" data-i18n="thDetails">Details</th>
+                    </tr>
+                  </thead>
+                  <tbody id="report-table-body">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Honest Disclaimer -->
+            <div class="honest-disclaimer-card">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <p data-i18n="honestDisclaimer"><strong>Honest Disclaimer:</strong> InjectCheck is a deterministic automated simulation using 24 fixed attack templates. A 100% score indicates strong resistance against standard vectors, but does not guarantee immunity from novel multi-step jailbreaks or advanced prompt engineering. Always enforce strict server-side authorization boundaries.</p>
+            </div>
+
+            <div class="step-nav-actions no-print">
+              <button type="button" class="btn btn-secondary prev-step-btn" data-prev="2" data-i18n="backEditPrompt">&larr; Back to Prompt Editor</button>
+              <button type="button" class="btn btn-primary" id="retest-now-btn" data-i18n="retestNow">Run Audit Again</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- "What We Test" Section -->
+    <section class="info-section" id="what-we-test">
+      <div class="container">
+        <h2 class="section-heading text-center" data-i18n="whatWeTestHeading">What We Test (6 Threat Vectors)</h2>
+        <p class="section-sub text-center" data-i18n="whatWeTestSub">Mapped to OWASP Top 10 for Large Language Models (LLM01 Prompt Injection &amp; LLM07 System Prompt Leakage).</p>
+
+        <div class="cards-grid">
+          <div class="info-card">
+            <div class="card-icon indigo">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+            </div>
+            <h3 data-i18n="catDirectTitle">Direct Instruction Override</h3>
+            <p data-i18n="catDirectDesc">Attempts to override your system prompt via authoritative commands, developer mode impersonation, and Hinglish overrides.</p>
+            <span class="badge badge-tag">OWASP LLM01</span>
+          </div>
+
+          <div class="info-card">
+            <div class="card-icon teal">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3 data-i18n="catExtractionTitle">Prompt &amp; Secret Extraction</h3>
+            <p data-i18n="catExtractionDesc">Attempts to trick the bot into repeating its system prompt, hidden business rules, confidential codes, or pricing formulas.</p>
+            <span class="badge badge-tag">OWASP LLM07</span>
+          </div>
+
+          <div class="info-card">
+            <div class="card-icon amber">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3 data-i18n="catRoleplayTitle">Role-play &amp; Persona Bypass</h3>
+            <p data-i18n="catRoleplayDesc">Tests psychological framing, such as the "grandma bedtime story", DevMode AI, or maintenance auditor persona attacks.</p>
+            <span class="badge badge-tag">OWASP LLM01</span>
+          </div>
+
+          <div class="info-card">
+            <div class="card-icon indigo">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <h3 data-i18n="catIndirectTitle">Indirect Injection in Data</h3>
+            <p data-i18n="catIndirectDesc">Hides adversarial payloads inside reviews, emails, and HTML tags that the bot is asked to summarize or translate.</p>
+            <span class="badge badge-tag">OWASP LLM01</span>
+          </div>
+
+          <div class="info-card">
+            <div class="card-icon teal">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></svg>
+            </div>
+            <h3 data-i18n="catObfuscationTitle">Obfuscation &amp; Ciphers</h3>
+            <p data-i18n="catObfuscationDesc">Evaluates if the bot obeys encoded instructions (Base64), character-separated leaks, or ROT13 ciphers that evade simple filters.</p>
+            <span class="badge badge-tag">OWASP LLM01</span>
+          </div>
+
+          <div class="info-card">
+            <div class="card-icon amber">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <h3 data-i18n="catScopeTitle">Social Engineering &amp; Scope Drift</h3>
+            <p data-i18n="catScopeDesc">Uses urgency, owner impersonation, or out-of-scope tasks (like writing poems) to test adherence to business boundaries.</p>
+            <span class="badge badge-tag">OWASP LLM01</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="info-section bg-surface-alt" id="how-it-works">
+      <div class="container">
+        <h2 class="section-heading text-center" data-i18n="howItWorksHeading">How InjectCheck Works</h2>
+        <div class="steps-flow-grid">
+          <div class="flow-step">
+            <div class="flow-num">1</div>
+            <h4 data-i18n="flowStep1Title">Canary Injection</h4>
+            <p data-i18n="flowStep1Desc">We append a dynamically randomized confidential canary code (e.g., CANARY-7F3K9Q) to your system prompt before testing begins.</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">2</div>
+            <h4 data-i18n="flowStep2Title">Browser-Side Execution</h4>
+            <p data-i18n="flowStep2Desc">24 pre-built benign attack prompts are sent directly from your browser to your chosen AI model using a concurrency pool of 3.</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">3</div>
+            <h4 data-i18n="flowStep3Title">Deterministic Evaluation</h4>
+            <p data-i18n="flowStep3Desc">No unreliable AI judge is used. Pure rule-based algorithms detect canary leaks, shingle text echo, and marker overrides.</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">4</div>
+            <h4 data-i18n="flowStep4Title">Bilingual Hardening</h4>
+            <p data-i18n="flowStep4Desc">Get clear, copy-paste prompt hardening snippets in English and Hindi to instantly secure vulnerable categories.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy and Safety Section -->
+    <section class="info-section" id="privacy">
+      <div class="container">
+        <div class="privacy-box">
+          <div class="privacy-icon">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <h2 class="section-heading" data-i18n="privacyHeading">Privacy &amp; Safety First</h2>
+            <ul class="privacy-list">
+              <li data-i18n="priv1"><strong>API Keys stay in memory:</strong> Your API keys are kept strictly in a JavaScript runtime variable. They are never written to localStorage, cookies, server logs, or telemetry.</li>
+              <li data-i18n="priv2"><strong>Zero Third-Party Telemetry:</strong> No Google Analytics, no trackers, no external CDNs, and no external font requests. Check DevTools Network tab anytime.</li>
+              <li data-i18n="priv3"><strong>Direct AI Calls Only:</strong> Requests travel directly from your client browser to Google AI Studio or your OpenAI provider endpoint.</li>
+              <li data-i18n="priv4"><strong>Responsible Testing:</strong> Only test prompts or bots you own or have explicit authorization to audit. Never use InjectCheck to attack third-party services.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion -->
+    <section class="info-section bg-surface-alt" id="faq">
+      <div class="container max-w-700">
+        <h2 class="section-heading text-center" data-i18n="faqHeading">Frequently Asked Questions</h2>
+
+        <div class="accordion" id="faq-accordion">
+          <details class="faq-item">
+            <summary class="faq-question" data-i18n="faqQ1">What is prompt injection?</summary>
+            <div class="faq-answer">
+              <p data-i18n="faqA1">Prompt injection happens when untrusted user input tricks an AI into ignoring its original instructions, leaking private instructions or carrying out unauthorized actions.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question" data-i18n="faqQ2">Why do you use a canary token?</summary>
+            <div class="faq-answer">
+              <p data-i18n="faqA2">A canary token is a secret string appended to the prompt. If this secret shows up in the model's reply under attack, it deterministically proves the bot leaked its internal context.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question" data-i18n="faqQ3">Will my API key be stored or saved?</summary>
+            <div class="faq-answer">
+              <p data-i18n="faqA3">No. The API key exists only in active browser memory during your tab session. As soon as you refresh or close the tab, the key vanishes completely.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question" data-i18n="faqQ4">What if I encounter CORS errors when testing my API?</summary>
+            <div class="faq-answer">
+              <p data-i18n="faqA4">Modern browsers block cross-origin calls if the API server doesn't send CORS headers. Google AI Studio and OpenAI allow direct browser calls. For local or custom models, ensure CORS is enabled or run through a local reverse proxy.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question" data-i18n="faqQ5">Can this tool guarantee 100% security for my AI chatbot?</summary>
+            <div class="faq-answer">
+              <p data-i18n="faqA5">No automated tool can guarantee absolute LLM security. InjectCheck audits against the top standard vectors. You should always pair prompt hardening with strict backend permissions, input filtering, and least-privilege API scopes.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Self-Test Results Container (shown if ?selftest=1) -->
+    <section class="container hidden" id="selftest-container">
+      <div class="selftest-card">
+        <h2>Evaluator Self-Test Results (?selftest=1)</h2>
+        <div id="selftest-results">Running self-tests...</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer" role="contentinfo">
+    <div class="container footer-content">
+      <div class="footer-left">
+        <strong>InjectCheck</strong> &mdash; <span data-i18n="footerTagline">Test your AI chatbot before your customers do.</span>
+      </div>
+      <div class="footer-right">
+        Built by Zero Trust Squad for Build With Bharat 5.0
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+
+  <!-- Scripts in dependency order (Plain ES2019, file:// compatible) -->
+  <script src="js/i18n.js"></script>
+  <script src="js/tests.js"></script>
+  <script src="js/evaluator.js"></script>
+  <script src="js/demo-bots.js"></script>
+  <script src="js/providers.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
